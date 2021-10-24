@@ -1,0 +1,1 @@
+function yn = SubjSessExists(subjnum,sessnum)if isempty(dir([sprintf('subj%02d_s%02d*.mat',subjnum,sessnum)]))	yn = 0;else	r=input('File already exists for this subject / session.\nContinue anyway? (y/n)','s');	if ~(r=='y' | r=='Y')		yn = 1;	else		yn = 0;	endend

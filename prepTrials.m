@@ -1,0 +1,125 @@
+function [trials] = prepTrials(nRuns,nTrialsPerRun,session)
+%
+% function [trials] = prepTrials_faceHouseTest(nTrialsPerLevel,params)
+%
+% Takes a stimulus directory and returns a structure
+% which is a shuffled list of trials for this experiment.
+%
+% This version is intended to go along with v02a_up
+%
+% nTrialsPerLevel defaults to 10
+%
+% conditions (stimCat = which way is the gabor leaning)
+% ----------
+%
+% #   StimCat  DCF  L-eye   R-eye   contrast
+% --  -------  ---  -----   -----   --------
+% 
+%  1   FACE     1    R        G       1
+%  2   FACE     1    G        R       1
+%  3   HOUSE    1    R        G       1
+%  4   HOUSE    1    G        R       1
+%  5   BLANK    1    R        G       1
+%  6   BLANK    1    G        R       1
+%  7   FACE     0    R        R       1
+%  8   FACE     0    G        G       1
+%  9   HOUSE    0    R        R       1
+%  10  HOUSE    0    G        G       1
+%  11  BLANK    0    R        R       1 
+%  12  BLANK    0    G        G       1
+%
+%
+params=session.params;
+nTrials=nRuns*nTrialsPerRun;
+nStimCat = 3; % number of stimulus categories (FHB)
+nConds = 4 * nStimCat; % the '4' is for all color combinations (DCF*lEyecolor)
+nBlueDot = round(params.blueDot.prop*(nTrials));
+if nBlueDot ~= (params.blueDot.prop*nTrials)
+    warning('blue dot trials were rounded')
+end
+
+if ~((nTrials/12)==floor(nTrials/12))
+    error('Number of trials must be divisible by 8 (2x the number of stimuli categories).')
+end
+
+disp(sprintf('\n%d trials per stim condition \n%d trials with blue dot task \n%d total trials\n',...
+    nTrials/nConds, nBlueDot, nTrials));
+OK = '1'; %input('OK? ','s');
+if ~(OK == '1' | OK == 'y' | OK == 'Y')
+    disp('aborted')
+    return
+end
+
+% ordered set of conditions
+FHB = repmat(['FFHHBB']',nTrials/6,1);
+DCF = repmat([1 1 1 1 1 1 0 0 0 0 0 0]' ,nTrials/12,1);
+lEyeColor = repmat(['RG']',nTrials/2,1); % background color in left eye
+alpha = params.color.contrastLevel;
+if ~(length(FHB)==length(lEyeColor))
+    error('Something is wrong!');
+end
+condList = repmat([1:nConds]',nTrials/nConds,1);
+
+d = dir('stimRegular/face_*.pcx');
+faceStim = {d.name};
+d = dir('stimRegular/house_*.pcx');
+houseStim = {d.name};
+d = dir('stimRegular/blank.pcx');
+blankStim = d.name;
+faceInd=0; houseInd=0;
+
+for i=1:nTrials
+	trials(i).cond = condList(i); % condition #
+    trials(i).stimCat = FHB(i); % category of the stimulus (face/house/blank)
+	trials(i).DCF = DCF(i); % 1/0 same / different stimulation (always DCF in this experiment)
+	trials(i).lEyeBG = lEyeColor(i); % background color to right eye
+    trials(i).contrastLevel = alpha; % color contrast level
+    trials(i).blueDot = false;
+    % CYCLE THROUGH FACE / HOUSE STIMULI
+    if trials(i).stimCat == 'B'
+        trials(i).imgFile = blankStim;
+    else
+        [trials(i).imgFile, faceInd, houseInd] = ...
+            select_faceHouse_image(FHB(i),faceInd,houseInd,faceStim,houseStim); % name of image file(s) (cell array)
+    end 
+    trials(i).resp = []; % subject response
+    trials(i).respc = ''; % character code for response
+    trials(i).rt = []; % response time
+	trials(i).acc = []; % accuracy
+    trials(i).flipHor = []; % 1/0 flip horizontal
+    trials(i).startTrial = 0; % time just before first flash in the trial
+    trials(i).endTrial = 0; % time just after last flash in the trial
+    trials(i).imgPath = session.imgPath; % to be assigned later
+    trials(i).preview_15 = false; 
+    trials(i).preview_13 = false;
+end
+
+for u=1:nBlueDot
+    trials(u).blueDot=true;
+    
+end    
+
+
+% SHUFFLE (shuffle)
+trials = shuffle(trials);
+return
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function [fileName,faceInd,houseInd] = select_faceHouse_image(stimCat, faceInd, houseInd, faceStim, houseStim)
+
+    nFace = length(faceStim);
+    nHouse = length(houseStim);
+    
+    switch stimCat
+        case 'F'
+            faceInd = mod((faceInd+1)-1,nFace)+1;
+            fileName = faceStim{faceInd};
+        case 'H'
+            houseInd = mod((houseInd+1)-1,nHouse)+1;
+            fileName = houseStim{houseInd};
+        otherwise
+            error('Incorrect stimulus category. Only "F" and "H" are allowed.');
+    end
+
+        

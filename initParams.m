@@ -1,0 +1,1 @@
+function params = initParams(p)%% This is a wrapper function.% Use it to call the appropriate params-returning function for this% computer.%% July 2021%params = params_Psych131(p);
