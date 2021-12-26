@@ -83,6 +83,8 @@ for i=1:nTrials
     trials(i).imgPath = './stimRegular/';  % to be assigned later
     trials(i).preview_15 = true;
     trials(i).preview_13 = false;
+    trials(i).preview_11 = false;
+    trials(i).post_test = params.is_post_test;
 end
 
 % SHUFFLE (shuffle)

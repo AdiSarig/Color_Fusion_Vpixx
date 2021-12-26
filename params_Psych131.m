@@ -1,4 +1,4 @@
-function params = params_Psych131(p)
+function params = params_Psych131(p, session)
 %
 % Parameters for the Psych 131 testing room
 % May 2021
@@ -39,13 +39,19 @@ params.screen.rgbGamma = [1 1 1]; % gamma correction, if any
 
 % trigger codes
 params.address = hex2dec('DFC8'); % address for sending codes from parallel port
+params.trig.resp = convertTriggers(40);
+params.trig.resp_CR = convertTriggers(41);
+params.trig.resp_miss = convertTriggers(42);
+params.trig.resp_hit = convertTriggers(43);
+params.trig.resp_FA = convertTriggers(44);
+params.trig.resp_error = convertTriggers(49);
 
 % timing
 params.timing.nON = 12; %
 params.timing.nOFF = 24; % 
 params.timing.nFlashReps = 1; %
-params.timing.ITIbase = 1.0; % in seconds
-params.timing.ITIvar = 0.5; % in seconds
+params.timing.ITIbase = 0.5; % in seconds (was 1, changed to 0.5 by Adi Sarig, 1 Dec 2021)
+params.timing.ITIvar = 0.25; % in seconds (was 0.5, changed to 0.25 by Adi Sarig, 1 Dec 2021)
 params.timing.fixation = 0.500; % onset of fixation prior to start of trial
 params.timing.timeLimit = 1.0; % time limit for responding: typically 750 ms
 params.timing.timeoutDuration = 2; % duration of timeout, in case response is late
@@ -85,3 +91,41 @@ params.cInds = []; % indices into REDS and GREENS to use for this experiment
 %params.stimuli.bringToFixEcc = 100; % initial eccentricity
 %params.stimuli.bringToFixPtColor = 0;
 
+% vpixx pixel triggers
+bg = round(256*params.color.bgColor(3));
+vpix_trig=uint8([0 0 0 0 0 0 0 0,...
+    0 0 0 0 0 0 0 0,...
+    0 0 0 0 0 0 0 0;...
+    0 0 0 0 0 0 0 0,...
+    0 0 0 0 0 0 0 0,...
+    0 0 0 0 0 0 0 0;...
+    bg+2 bg-2 bg+2 bg-2 bg+2 bg-2 bg+2 bg-2,...
+    bg+2 bg-3 bg+2 bg-3 bg+2 bg-3 bg+2 bg-3,...
+    bg+3 bg-2 bg+3 bg-2 bg+3 bg-2 bg+3 bg-2]);
+
+params.ptrig.image = vpix_trig(:,1:8);       % image trigger
+params.ptrig.fixation = vpix_trig(:,9:16);   % fixation trigger
+
+if mod(session.subjnum, 2) == 0
+    params.resp.house = 1; % most left
+    params.resp.face = 4; % 3rd from left
+    params.instructions.prev = imread(fullfile(pwd,'instructions','prev_group1.tif'));
+    params.instructions.main = imread(fullfile(pwd,'instructions','main_group1.tif'));
+else
+    params.resp.house = 4; % 3rd from left
+    params.resp.face = 1; % most left
+    params.instructions.prev = imread(fullfile(pwd,'instructions','prev_group2.tif'));
+    params.instructions.main = imread(fullfile(pwd,'instructions','main_group2.tif'));
+end
+params.instructions.dot = imread(fullfile(pwd,'instructions','main.tif'));
+params.instructions.maintenance = imread(fullfile(pwd,'instructions','maintenance_break.tif'));
+params.instructions.break_over = imread(fullfile(pwd,'instructions','break_over.tif'));
+params.instructions.PAS_scale = imread(fullfile(pwd,'instructions','PAS_scale.tif'));
+params.instructions.PAS_info = imread(fullfile(pwd,'instructions','PAS_info.tif'));
+params.resp.dot = 2; % most right
+params.resp.exit = 5; % top
+params.resp.fusion_check = 3; % 2nd from left
+
+params.is_post_test = false;
+
+end

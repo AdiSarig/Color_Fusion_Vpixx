@@ -92,6 +92,8 @@ for i=1:nTrials
     trials(i).imgPath = session.imgPath; % to be assigned later
     trials(i).preview_15 = false; 
     trials(i).preview_13 = false;
+    trials(i).preview_11 = false;
+    trials(i).post_test = params.is_post_test;
 end
 
 for u=1:nBlueDot

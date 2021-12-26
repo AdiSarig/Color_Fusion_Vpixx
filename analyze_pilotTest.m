@@ -7,20 +7,14 @@ end
 nTrials = length(trials);
 
 for i=1:nTrials
-    tmp = KbName(trials(i).resp(1,:));
-    if isempty(tmp)
+    tmp = trials(i).resp;
+    if isempty(tmp) || tmp == -1 || tmp == 99
         tmp = nan;
-    elseif iscell(tmp)
-        if length(tmp)==1
-            tmp=tmp{1};
-        else
-            tmp=nan;
-        end
     end
     switch tmp
-        case {'f'}
+        case session.params.resp.face
             trials(i).respc = 'F';
-        case {'h'}
+        case session.params.resp.house
             trials(i).respc = 'H';
         otherwise
             trials(i).respc = '?';
@@ -54,6 +48,6 @@ end
 
 fit_and_plot_test_results(mACC_sam,subjNum,'SAME',lvls,mACC_opp);
 
-%fit_and_plot_test_results(mACC_opp,subjNum,'OPPOSITE',lvls);
+fit_and_plot_test_results(mACC_opp,subjNum,'OPPOSITE',lvls);
 
 

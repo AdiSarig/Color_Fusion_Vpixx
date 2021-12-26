@@ -18,7 +18,7 @@ for i=1:ind
     plot(range,polyval(P{i},range),'--','color',cm(i,:))
 end
 h = get(gca,'children');
-legend(h([1:2:ind*2]),cellstr(strrep(num2str([1:ind]),' ','')'));
+legend(h([1:2:ind*2]),cellstr(strrep(num2str([ind:-1:1]),' ','')'));
 
 use_tries = input('Which estimates to include? ');
 

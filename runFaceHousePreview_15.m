@@ -8,13 +8,7 @@ Screen('CloseAll');
 params.timing.nON = 12;
 params.timing.ITIbase = 2;
 
-nCorrect = 0;
-
-for i = 1:length(trials)
-   if strmatch(trials(i).stimCat, upper(KbName(trials(i).resp)))  
-       nCorrect = nCorrect + 1;
-   end
-end
+nCorrect = sum([trials.acc]);
 
 correctness = int8(nCorrect/length(trials)*100);
 
