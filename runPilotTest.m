@@ -37,8 +37,7 @@ disp('OK, press any key to begin...')
 pause
 
 if debug
-    % load subj00_sess00_lumFunc_20210827T155830.mat %use the reference value p
-    load subj222_sess222_lumFunc_20211110T111817.mat
+    load subj00_sess00_lumFunc_20210827T155830.mat %use the reference value p
 else
     [p,P,beta]=run_calibration; % leaves behind variables P and p
     save(sprintf('..%cdata%csubj%02d_sess%02d_lumFunc_%s.mat',filesep,filesep,session.subjnum,session.sessnum,datestr(now,30)),'p','P','beta');
