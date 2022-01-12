@@ -72,8 +72,8 @@ params.color.green = [];
 params.color.palette.reds = reds(params.color.alpha,cRange);
 params.color.palette.greens = greens(params.color.alpha,cRange,p);
 params.color.p = p;
-params.color.contrastLevel = 7;
-warning('contrastLevel is set to 7');
+params.color.contrastLevel = 6;
+warning('contrastLevel is set to 6');
 
 % params.color.reds = reds(cInds);
 % params.color.greens = greens(cInds,Jug_lumFunc);
