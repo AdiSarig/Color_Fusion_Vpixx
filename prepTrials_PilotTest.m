@@ -26,7 +26,7 @@ function [trials] = prepTrials_PilotTest(nTrialsPerLevel,params)
 %  etc...
 %
 % 12 contrast levels
-% (24 trials per contrast level)
+% (32 trials per contrast level)
 % \3 trials per condition above
 %
 
